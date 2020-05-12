@@ -7,14 +7,19 @@ namespace blackjack.Models
   {
     public List<string> Deck { get; set; }
     public List<string> Hand { get; set; }
+    public List<string> DealerHand { get; set; }
     public int HandValue { get; set; }
+    public int DealerHandValue { get; set; }
     public void Setup()
     {
       List<string> newDeck = BuildDeck();
       Deck = ShuffleDeck(newDeck);
       Hand = new List<string>();
-      Draw();
-      Draw();
+      DealerHand = new List<string>();
+      Draw(DealerHand);
+      Draw(DealerHand);
+      Draw(Hand);
+      Draw(Hand);
     }
 
     private List<string> BuildDeck()
@@ -33,11 +38,11 @@ namespace blackjack.Models
       return cards;
     }
 
-    internal void EvaluateHand()
+    internal int EvaluateHand(List<string> hand)
     {
-      HandValue = 0;
+      int handValue = 0;
       int aces = 0;
-      foreach (string card in Hand)
+      foreach (string card in hand)
       {
         int cardValue = GetCardValue(card.Split(" ")[0]);
         if (cardValue == 1)
@@ -46,21 +51,40 @@ namespace blackjack.Models
         }
         else
         {
-          HandValue += cardValue;
+          handValue += cardValue;
         }
       }
-      //add aces if less than 21
-      if (aces > 0 && HandValue + 11 <= 21 && aces < 2)
+      if (aces > 0 && handValue + 11 <= 21 && aces < 2)
       {
         aces--;
-        HandValue += 11;
+        handValue += 11;
       }
-      HandValue += aces;
+      handValue += aces;
+      return handValue;
     }
 
-    internal void WinOrLose()
+    internal bool WinOrLose()
     {
-      System.Console.WriteLine(HandValue);
+      PrintHand(false);
+      System.Console.WriteLine("\nYour hand is worth " + HandValue + "\nThe Dealer hand is worth " + DealerHandValue);
+      if ((DealerHandValue < HandValue && HandValue <= 21) || DealerHandValue > 21)
+      {
+        System.Console.WriteLine("You won!");
+      }
+      else
+      {
+        System.Console.WriteLine("You lost!");
+      }
+      System.Console.WriteLine("Do you want to play again? Y/N");
+      if (Console.ReadLine().ToLower() == "y")
+      {
+        Setup();
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     private int GetCardValue(string val)
@@ -69,6 +93,13 @@ namespace blackjack.Models
       switch (val.ToLower())
       {
         case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
           int.TryParse(val, out output);
           break;
         case "10":
@@ -87,28 +118,58 @@ namespace blackjack.Models
     internal void Hit()
     {
       System.Console.WriteLine("You draw a card.");
-      Draw();
+      Draw(Hand);
+      DealerPlay();
     }
 
-    private void Draw()
+    private void Draw(List<string> hand)
     {
-      Hand.Add(Deck[0]);
+      hand.Add(Deck[0]);
       Deck.RemoveAt(0);
     }
 
+    internal void EvaluateHands()
+    {
+      DealerHandValue = EvaluateHand(DealerHand);
+      HandValue = EvaluateHand(Hand);
+    }
     internal void Stand()
     {
       System.Console.WriteLine("You hold tight.");
+      EvaluateHands();
+      DealerPlay();
     }
 
-    internal void PrintHand()
+    private void DealerPlay()
     {
-      System.Console.Write("Hand:");
+      EvaluateHands();
+      if (DealerHandValue < 17)
+      {
+        Draw(DealerHand);
+        DealerHandValue = EvaluateHand(DealerHand);
+      }
+    }
+    internal void PrintHand(bool limited)
+    {
+      System.Console.Write("\nHand:");
       foreach (string card in Hand)
       {
         System.Console.Write($" {card} ");
       }
-      System.Console.WriteLine();
+      if (limited)
+      {
+        System.Console.WriteLine();
+        System.Console.Write("\nDealer hand:");
+        System.Console.Write($" {DealerHand[0]}\n\n");
+      }
+      else
+      {
+        System.Console.Write("\nDealer Hand:");
+        foreach (string card in DealerHand)
+        {
+          System.Console.Write($" {card} ");
+        }
+      }
     }
 
     private List<string> ShuffleDeck(List<string> deck)
