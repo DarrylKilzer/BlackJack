@@ -17,16 +17,20 @@ namespace blackjack
 
       while (Playing)
       {
-        GetUserInput();
+        if (GetUserInput())
+        {
+          continue;
+        }
         Game.EvaluateHands();
         Playing = Game.WinOrLose();
       }
     }
 
-    private void GetUserInput()
+    private bool GetUserInput()
     {
       Game.PrintHand(true);
       System.Console.WriteLine("What would you like to do? Stand / Hit / Quit");
+      bool cont = false;
       switch (Console.ReadLine().ToLower())
       {
         case "quit":
@@ -39,11 +43,13 @@ namespace blackjack
           break;
         case "hit":
           Game.Hit();
+          cont = true;
           break;
         default:
           System.Console.WriteLine("You must \"Stand\", \"Hit\", or \"Quit\"");
           break;
       }
+      return cont;
     }
   }
 }
