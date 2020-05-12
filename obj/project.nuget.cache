@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Y67BR4RQi6+JZmFSFLEJRCLhDtywQarwY8FxMGCuMiLuVpfnibADDQX4dGNwhgdtxeKq2BYWvUlxy/IwDWtFYw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\darry\\garbage\\blackjack\\blackjack.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\darry\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
+    "C:\\Users\\darry\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.0.3\\microsoft.netcore.app.host.win-x64.3.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
